@@ -1,0 +1,2 @@
+export function secondsBetween(start?: string, end = new Date().toISOString()) { if (!start) return undefined; const ms = new Date(end).getTime() - new Date(start).getTime(); return Number.isFinite(ms) && ms > 0 ? Math.floor(ms/1000) : undefined; }
+export function formatDuration(seconds?: number) { if (!seconds) return '—'; const h=Math.floor(seconds/3600), m=Math.floor((seconds%3600)/60); return h ? `${h}h ${m}m` : `${m}m`; }

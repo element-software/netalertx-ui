@@ -1,0 +1,3 @@
+export function normaliseMac(mac?: string) { if (!mac) return undefined; const hex = mac.replace(/[^a-fA-F0-9]/g, '').toUpperCase(); if (hex.length !== 12) return mac.trim(); return hex.match(/.{1,2}/g)?.join(':'); }
+export function isPrivateMac(mac?: string) { const n = normaliseMac(mac); if (!n) return false; const first = Number.parseInt(n.slice(0,2),16); return Number.isFinite(first) && (first & 0b10) === 0b10; }
+export function stableDeviceId(rawId?: string, mac?: string, ip?: string) { return (rawId || normaliseMac(mac) || ip || crypto.randomUUID()).toString().replace(/[^a-zA-Z0-9:_-]/g, '_'); }

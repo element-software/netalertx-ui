@@ -1,0 +1,2 @@
+import { Card } from '@/components/ui/Card';import { StatusBadge } from './StatusBadge';
+export function NetworkHealthCard({summary}:{summary:any}){return <Card><div className="flex items-start justify-between"><div><h2 className="text-xl font-bold">Network status</h2><p className="mt-2 text-slate-400">{summary.isStale?'Data is stale. Check NetAlertX or backend connectivity.':'Live data is current.'}</p></div><StatusBadge status={summary.status}/></div></Card>}

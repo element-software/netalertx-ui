@@ -1,0 +1,2 @@
+import { Card } from '@/components/ui/Card';
+export function RecentEventsPanel({events}:{events:any[]}){return <Card><h2 className="mb-4 text-xl font-bold">Recent events</h2><div className="space-y-3">{events.slice(0,7).map(e=><div key={e.id} className="rounded-2xl border border-white/5 bg-white/[.03] p-3"><p className="font-medium">{e.message}</p><p className="text-xs text-slate-500">{new Date(e.at).toLocaleString()}</p></div>)}</div></Card>}

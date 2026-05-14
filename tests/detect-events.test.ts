@@ -1,0 +1,3 @@
+import { describe, expect, it } from 'vitest';import { detectEvents } from '@/lib/monitor/detect-events';import type { Device } from '@/lib/netalertx/types';
+const base:Device={id:'a',name:'A',displayName:'A',status:'offline',isOnline:false,isKnown:true,isNew:false,isUnknown:false,isPrivateMac:false,source:'demo'};
+describe('detectEvents',()=>{it('detects joined/disconnected/reconnected changes',()=>{expect(detectEvents([], [{...base,isOnline:true,status:'online'}]).map(e=>e.type)).toContain('device_first_seen');expect(detectEvents([{...base,isOnline:true,status:'online'}],[base]).map(e=>e.type)).toContain('device_disconnected');expect(detectEvents([base],[{...base,isOnline:true,status:'online'}]).map(e=>e.type)).toContain('device_reconnected');});});

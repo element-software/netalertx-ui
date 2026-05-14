@@ -1,0 +1,3 @@
+import { getDevice, recentEvents } from '@/lib/db';import { DeviceDetailPanel } from '@/components/devices/DeviceDetailPanel';import { notFound } from 'next/navigation';
+export const dynamic='force-dynamic';
+export default async function DevicePage({params}:{params:Promise<{id:string}>}){const {id}=await params;const device=getDevice(id);if(!device)notFound();return <main className="min-h-screen p-6"><div className="mx-auto max-w-5xl"><a className="text-slate-400" href="/devices">← Devices</a><div className="mt-4"><DeviceDetailPanel device={device} events={recentEvents(100).filter(e=>e.deviceId===id)}/></div></div></main>}

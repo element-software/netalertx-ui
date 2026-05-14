@@ -1,0 +1,1 @@
+export function DeviceTimeline({events}:{events:any[]}){return <div className="space-y-3">{events.map(e=><div key={e.id} className="rounded-2xl bg-white/[.04] p-3"><p>{e.message}</p><p className="text-xs text-slate-500">{new Date(e.at).toLocaleString()}</p></div>)}</div>}

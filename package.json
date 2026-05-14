@@ -17,7 +17,8 @@
     "next": "latest",
     "react": "latest",
     "react-dom": "latest",
-    "tailwindcss": "latest"
+    "tailwindcss": "latest",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/better-sqlite3": "latest",

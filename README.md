@@ -49,8 +49,10 @@ Open <http://localhost:3030>.
 
 | Variable | Description |
 | --- | --- |
-| `NETALERTX_BASE_URL` | Server-side base URL of your NetAlertX instance. |
-| `NETALERTX_API_TOKEN` | Optional token, sent only server-side. |
+| `NETALERTX_BASE_URL` | Server-side base URL (GraphQL port). Trailing `/docs` or `/graphql` is stripped. See [NetAlertX GraphQL API](https://github.com/netalertx/NetAlertX/blob/main/docs/API_GRAPHQL.md). |
+| `NETALERTX_API_TOKEN` | Bearer token for GraphQL (and REST), sent only server-side. |
+| `NETALERTX_GRAPHQL_DEVICE_STATUS` | Optional `devices(options)` status filter: `my_devices`, `connected`, `favorites`, `new`, `down`, `archived`, `offline`. Omit for no filter. |
+| `NETALERTX_GRAPHQL_PAGE_LIMIT` | GraphQL devices page size (default 500, max 1000). |
 | `POLL_INTERVAL_SECONDS` | Dashboard poll/SSE interval. |
 | `SQLITE_DB_PATH` | Local SQLite path, e.g. `/app/data/netglance.sqlite`. |
 | `APP_NAME` | Display name, defaults to NetGlance. |
@@ -60,7 +62,7 @@ Open <http://localhost:3030>.
 
 ## Connecting to NetAlertX
 
-NetGlance tries common NetAlertX-style device endpoints and normalises the response server-side. Assumption for v1: device responses are either an array or an object with `devices`/`data`, with fields such as `dev_MAC`, `dev_Name`, `dev_LastIP`, `dev_Vendor`, and `dev_PresentLastScan`. TODO: confirm exact field names against more real NetAlertX versions and add endpoint adapters as needed.
+NetGlance loads devices using the [official GraphQL `devices` query](https://github.com/netalertx/NetAlertX/blob/main/docs/API_GRAPHQL.md) (`POST /graphql`, `GetDevices` + `PageQueryOptionsInput`: `page`, `limit`, `sort`, `search`, optional `status`). If GraphQL fails, it falls back to common REST device endpoints and normalises camelCase or legacy field names server-side.
 
 ## Tablet/kiosk usage
 

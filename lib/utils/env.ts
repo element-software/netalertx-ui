@@ -1,2 +1,30 @@
-export function getEnv() { return { appName: process.env.APP_NAME || 'NetGlance', netalertxBaseUrl: process.env.NETALERTX_BASE_URL || '', netalertxApiToken: process.env.NETALERTX_API_TOKEN || '', pollIntervalSeconds: Math.max(5, Number(process.env.POLL_INTERVAL_SECONDS || 30)), sqliteDbPath: process.env.SQLITE_DB_PATH || './data/netglance.sqlite', appBaseUrl: process.env.APP_BASE_URL || '', enableSoundAlerts: process.env.ENABLE_SOUND_ALERTS === 'true', demoMode: process.env.ENABLE_DEMO_MODE === 'true' }; }
+/** Strips `/docs` or `/graphql` so NETALERTX_BASE_URL can match the GraphQL docs URL. */
+export function normalizeNetAlertXBaseUrl(url: string): string {
+  if (!url) return '';
+  let u = url.trim().replace(/\/+$/, '');
+  const lower = u.toLowerCase();
+  if (lower.endsWith('/docs')) u = u.slice(0, -'/docs'.length);
+  else if (lower.endsWith('/graphql')) u = u.slice(0, -'/graphql'.length);
+  return u.replace(/\/+$/, '');
+}
+export function getEnv() {
+  const graphqlLimitRaw = process.env.NETALERTX_GRAPHQL_PAGE_LIMIT;
+  const graphqlLimit = graphqlLimitRaw
+    ? Number(graphqlLimitRaw)
+    : 500;
+  return {
+    appName: process.env.APP_NAME || 'NetGlance',
+    netalertxBaseUrl: normalizeNetAlertXBaseUrl(process.env.NETALERTX_BASE_URL || ''),
+    netalertxApiToken: process.env.NETALERTX_API_TOKEN || '',
+    /** Optional `devices(options)` status filter per NetAlertX GraphQL docs (e.g. my_devices, connected). Omit from env to leave unset. */
+    netalertxGraphqlDeviceStatus: (process.env.NETALERTX_GRAPHQL_DEVICE_STATUS || '').trim() || undefined,
+    /** Page size for GraphQL devices query (NetAlertX events/plugins docs allow up to 1000). */
+    netalertxGraphqlPageLimit: Math.min(1000, Math.max(1, Number.isFinite(graphqlLimit) ? graphqlLimit : 500)),
+    pollIntervalSeconds: Math.max(5, Number(process.env.POLL_INTERVAL_SECONDS || 30)),
+    sqliteDbPath: process.env.SQLITE_DB_PATH || './data/netglance.sqlite',
+    appBaseUrl: process.env.APP_BASE_URL || '',
+    enableSoundAlerts: process.env.ENABLE_SOUND_ALERTS === 'true',
+    demoMode: process.env.ENABLE_DEMO_MODE === 'true',
+  };
+}
 export function safeConfig() { const env = getEnv(); let host = 'not configured'; try { host = env.netalertxBaseUrl ? new URL(env.netalertxBaseUrl).host : host; } catch { host = 'invalid URL'; } return { appName: env.appName, netalertxHost: host, pollIntervalSeconds: env.pollIntervalSeconds, sqliteConfigured: Boolean(env.sqliteDbPath), demoMode: env.demoMode, soundAlertsEnabled: env.enableSoundAlerts }; }

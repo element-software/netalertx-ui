@@ -1,0 +1,2 @@
+import { describe, expect, it } from 'vitest';import { isPrivateMac, normaliseMac } from '@/lib/utils/mac';
+describe('MAC utilities',()=>{it('normalises MAC addresses',()=>expect(normaliseMac('02-aa-bb-cc-dd-ee')).toBe('02:AA:BB:CC:DD:EE'));it('detects locally administered randomised MACs',()=>{expect(isPrivateMac('02:AA:BB:CC:DD:EE')).toBe(true);expect(isPrivateMac('00:11:22:33:44:55')).toBe(false);});});

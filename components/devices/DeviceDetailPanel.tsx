@@ -34,7 +34,7 @@ export function DeviceDetailPanel({
     <Card className="p-5 md:p-6">
       <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
         <div className="min-w-0">
-          <h1 className="text-4xl font-black tracking-tight">{device.displayName}</h1>
+          <h1 className="text-2xl font-black tracking-tight sm:text-3xl md:text-4xl">{device.displayName}</h1>
           {device.isPrivateMac ? (
             <p className="mt-2 text-sm text-slate-400">
               Private/randomised MAC detected locally.
@@ -44,14 +44,16 @@ export function DeviceDetailPanel({
         <Badge tone={device.isOnline ? 'green' : 'slate'}>{device.status}</Badge>
       </div>
 
-      <dl className="grid gap-3 sm:grid-cols-2">
-        {rows.map(([k, v]) => (
-          <div key={k} className="rounded-2xl bg-white/[.04] p-4">
-            <dt className="text-sm text-slate-500">{k}</dt>
-            <dd className="font-semibold">{v || '—'}</dd>
-          </div>
-        ))}
-      </dl>
+      <div className="-mx-5 touch-pan-x overflow-x-auto overscroll-x-contain px-5 md:-mx-6 md:px-6">
+        <dl className="grid min-w-max grid-cols-1 gap-3 sm:min-w-0 sm:grid-cols-2">
+          {rows.map(([k, v]) => (
+            <div key={k} className="min-w-[12rem] max-w-[28rem] rounded-2xl bg-white/[.04] p-4 sm:max-w-none">
+              <dt className="text-sm text-slate-500">{k}</dt>
+              <dd className="break-words font-semibold">{v || '—'}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
 
       <DeviceRenameForm
         key={`${device.id}-${device.displayName}`}

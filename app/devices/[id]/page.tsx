@@ -10,7 +10,7 @@ export default async function DevicePage({ params }: { params: Promise<{ id: str
   const device = getDevice(id);
   if (!device) notFound();
   return (
-    <div className="h-full overflow-y-auto overscroll-y-contain p-6">
+    <div className="h-full overflow-y-auto overscroll-y-contain p-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:p-6">
       <div className="mx-auto max-w-5xl">
         <Link
           href="/devices"

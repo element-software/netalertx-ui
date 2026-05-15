@@ -64,17 +64,18 @@ export function AppFrame({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <div className="flex h-[100dvh] min-h-0 w-full overflow-hidden text-[var(--fg,#e5eefb)]">
+    <div className="flex h-[100dvh] min-h-0 w-full flex-col overflow-hidden text-[var(--fg,#e5eefb)] xl:flex-row">
       <aside
         className={[
-          'flex shrink-0 flex-col border-r border-white/10 bg-slate-950/80 backdrop-blur-xl transition-[width,padding] duration-200 ease-out',
-          collapsed ? 'w-14 py-4 pl-1.5 pr-1.5' : 'w-[13.75rem] py-5 pl-4 pr-3',
+          'flex border-white/10 bg-slate-950/80 backdrop-blur-xl transition-[width,padding] duration-200 ease-out',
+          'order-2 shrink-0 flex-col border-t max-xl:w-full max-xl:flex-row max-xl:items-center max-xl:justify-between max-xl:gap-1 max-xl:px-2 max-xl:py-2 max-xl:pb-[max(0.5rem,env(safe-area-inset-bottom))] xl:order-none xl:flex-col xl:border-r xl:border-t-0',
+          collapsed ? 'w-14 py-4 pl-1.5 pr-1.5 max-xl:w-full max-xl:py-2 max-xl:pl-2 max-xl:pr-2' : 'w-[13.75rem] py-5 pl-4 pr-3 max-xl:w-full max-xl:py-2 max-xl:px-2',
         ].join(' ')}
         aria-label="Application"
       >
         <div
           className={[
-            'mb-4 flex min-h-[2.75rem] items-start gap-2',
+            'mb-4 flex min-h-[2.75rem] items-start gap-2 max-xl:hidden',
             collapsed ? 'flex-col items-center px-0' : 'mb-6 px-2',
           ].join(' ')}
         >
@@ -91,7 +92,7 @@ export function AppFrame({ children }: { children: React.ReactNode }) {
             type="button"
             onClick={toggleCollapsed}
             className={[
-              'flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-white/10 text-slate-400 transition-colors hover:bg-white/[0.06] hover:text-white',
+              'flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-white/10 text-slate-400 transition-colors hover:bg-white/[0.06] hover:text-white max-xl:hidden',
               collapsed ? 'mx-auto' : 'mt-0.5',
             ].join(' ')}
             aria-expanded={!collapsed}
@@ -113,7 +114,14 @@ export function AppFrame({ children }: { children: React.ReactNode }) {
             </svg>
           </button>
         </div>
-        <nav id="app-main-nav" className="flex flex-col gap-0.5" aria-label="Main navigation">
+        <div className="hidden max-xl:flex max-xl:shrink-0 max-xl:items-center max-xl:justify-center max-xl:px-1" aria-hidden>
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/[0.08] text-sm font-black text-white">N</div>
+        </div>
+        <nav
+          id="app-main-nav"
+          className="flex max-xl:min-w-0 max-xl:flex-1 max-xl:flex-row max-xl:justify-evenly max-xl:gap-0.5 xl:flex-col xl:gap-0.5"
+          aria-label="Main navigation"
+        >
           {NAV.map(({ href, label, Icon }) => {
             const active = navActive(pathname, href);
             return (
@@ -123,20 +131,23 @@ export function AppFrame({ children }: { children: React.ReactNode }) {
                 title={collapsed ? label : undefined}
                 className={[
                   'flex items-center gap-3 rounded-r-xl border-l-2 py-2.5 text-sm transition-colors',
-                  collapsed ? 'justify-center px-0' : 'pl-3 pr-2',
+                  'max-xl:min-w-0 max-xl:flex-1 max-xl:flex-col max-xl:justify-center max-xl:gap-1 max-xl:rounded-xl max-xl:border-l-0 max-xl:border-t-2 max-xl:px-1 max-xl:py-2.5 max-xl:text-center max-xl:text-xs',
+                  collapsed ? 'justify-center px-0 xl:justify-center' : 'pl-3 pr-2 max-xl:px-1',
                   active
-                    ? 'border-l-emerald-400 bg-white/[0.08] font-semibold text-white'
-                    : 'border-l-transparent text-slate-400 hover:bg-white/[0.05] hover:text-slate-200',
+                    ? 'max-xl:border-t-emerald-400 border-l-emerald-400 bg-white/[0.08] font-semibold text-white'
+                    : 'max-xl:border-t-transparent border-l-transparent text-slate-400 hover:bg-white/[0.05] hover:text-slate-200',
                 ].join(' ')}
               >
-                <Icon className="h-[1.125rem] w-[1.125rem] shrink-0 opacity-90" aria-hidden />
-                <span className={collapsed ? 'sr-only' : ''}>{label}</span>
+                <Icon className="h-[1.125rem] w-[1.125rem] shrink-0 opacity-90 max-xl:h-5 max-xl:w-5" aria-hidden />
+                <span className={collapsed ? 'max-xl:inline xl:sr-only' : ''}>{label}</span>
               </Link>
             );
           })}
         </nav>
       </aside>
-      <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">{children}</div>
+      <div className="order-1 flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden pt-[env(safe-area-inset-top)] xl:order-none">
+        {children}
+      </div>
     </div>
   );
 }

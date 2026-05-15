@@ -12,12 +12,12 @@ export function DashboardHeader({ summary }: { summary: any }) {
   }, []);
 
   return (
-    <header className="flex items-center justify-between gap-4">
-      <div>
+    <header className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+      <div className="min-w-0">
         <p className="text-sm uppercase tracking-[.45em] text-cyan-200/70">Local network</p>
-        <h1 className="text-5xl font-black tracking-tight">{summary.appName}</h1>
+        <h1 className="text-3xl font-black tracking-tight sm:text-4xl lg:text-5xl">{summary.appName}</h1>
       </div>
-      <div className="text-right">
+      <div className="shrink-0 text-left sm:text-right">
         <div className="mb-2">
           <StatusBadge status={summary.status} />
           {summary.demoMode && (

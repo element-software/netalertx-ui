@@ -69,20 +69,23 @@ export function DashboardShell() {
   const alerts = summary.alerts as { id: string }[] | undefined;
 
   return (
-    <div className="flex h-full min-h-0 flex-col gap-5 overflow-hidden p-6">
+    <div className="flex h-full min-h-0 flex-col gap-4 overflow-hidden p-4 sm:gap-5 sm:p-6 max-xl:overflow-y-auto max-xl:overscroll-y-contain">
       <DashboardHeader summary={summary} />
       <SummaryCards summary={summary} />
-      <div className="grid min-h-0 flex-1 grid-cols-1 gap-5 overflow-hidden lg:grid-cols-[1.05fr_0.95fr]">
-        <div className="flex min-h-0 min-w-0 flex-col gap-5 overflow-hidden">
+      <div className="grid min-h-0 flex-1 grid-cols-1 gap-4 overflow-hidden sm:gap-5 xl:grid-cols-[1.05fr_0.95fr] max-xl:flex-none max-xl:overflow-visible xl:min-h-0">
+        <div className="flex min-h-0 min-w-0 flex-col gap-4 overflow-hidden sm:gap-5 max-xl:min-h-0">
           <div className="shrink-0">
             <LatestEventCard event={(summary as { latestEvent?: unknown }).latestEvent} />
           </div>
           <div className="shrink-0">
             <NetworkHealthCard summary={summary} />
           </div>
-          <OnlineDevicesPanel devices={devices} className="min-h-0 min-w-0 flex-1" />
+          <OnlineDevicesPanel
+            devices={devices}
+            className="min-h-[min(42dvh,22rem)] min-w-0 shrink-0 xl:min-h-0 xl:flex-1"
+          />
         </div>
-        <div className="flex min-h-0 min-w-0 flex-col overflow-hidden">
+        <div className="flex min-h-0 min-w-0 flex-col overflow-hidden max-xl:min-h-[min(42dvh,22rem)] xl:min-h-0">
           <RecentEventsPanel events={events} className="h-full min-h-0 flex-1" />
         </div>
       </div>

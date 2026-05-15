@@ -37,26 +37,31 @@ function navActive(pathname: string, href: string) {
 export function AppFrame({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
-  const [storedLoaded, setStoredLoaded] = useState(false);
 
+  // localStorage is unavailable during SSR; apply the saved width after hydrate.
   useEffect(() => {
     try {
-      setCollapsed(localStorage.getItem(STORAGE_KEY) === '1');
+      if (localStorage.getItem(STORAGE_KEY) === '1') {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- localStorage only after hydrate
+        setCollapsed(true);
+      }
     } catch {
       /* ignore */
     }
-    setStoredLoaded(true);
   }, []);
 
-  useEffect(() => {
-    if (!storedLoaded) return;
-    try {
-      if (collapsed) localStorage.setItem(STORAGE_KEY, '1');
-      else localStorage.removeItem(STORAGE_KEY);
-    } catch {
-      /* ignore */
-    }
-  }, [collapsed, storedLoaded]);
+  const toggleCollapsed = () => {
+    setCollapsed((c) => {
+      const next = !c;
+      try {
+        if (next) localStorage.setItem(STORAGE_KEY, '1');
+        else localStorage.removeItem(STORAGE_KEY);
+      } catch {
+        /* ignore */
+      }
+      return next;
+    });
+  };
 
   return (
     <div className="flex h-[100dvh] min-h-0 w-full overflow-hidden text-[var(--fg,#e5eefb)]">
@@ -84,7 +89,7 @@ export function AppFrame({ children }: { children: React.ReactNode }) {
           )}
           <button
             type="button"
-            onClick={() => setCollapsed((c) => !c)}
+            onClick={toggleCollapsed}
             className={[
               'flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-white/10 text-slate-400 transition-colors hover:bg-white/[0.06] hover:text-white',
               collapsed ? 'mx-auto' : 'mt-0.5',

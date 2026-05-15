@@ -29,9 +29,46 @@ export interface RawNetAlertXDevice {
   lastSeen?: string;
   dev_LastDisconnect?: string;
   lastDisconnected?: string;
+  devOwner?: string | number;
+  dev_Owner?: string | number;
+  dev_Group?: string | number;
+  devGroup?: string | number;
+  dev_Location?: string | number;
+  devLocation?: string | number;
+  dev_StaticIP?: boolean | string | number;
+  devStaticIP?: boolean | string | number;
   [key: string]: unknown;
 }
 export interface NetAlertXEvent { id: string; type: EventType; deviceId?: string; deviceName?: string; message: string; at: string; severity: 'info'|'warning'|'critical' }
-export interface Device { id: string; name: string; displayName: string; ipAddress?: string; macAddress?: string; vendor?: string; deviceType?: string; status: DeviceStatus; isOnline: boolean; isKnown: boolean; isNew: boolean; isUnknown: boolean; isPrivateMac: boolean; firstSeen?: string; lastSeen?: string; lastConnected?: string; lastDisconnected?: string; connectedDurationSeconds?: number; source: 'netalertx'|'demo'; rawNetAlertXId?: string }
+export interface Device {
+  id: string;
+  name: string;
+  displayName: string;
+  ipAddress?: string;
+  macAddress?: string;
+  vendor?: string;
+  deviceType?: string;
+  /** NetAlertX `devOwner` */
+  owner?: string;
+  /** NetAlertX `devGroup` */
+  group?: string;
+  /** NetAlertX `devLocation` */
+  location?: string;
+  /** NetAlertX `devStaticIP` — device marked as using a static IP */
+  staticIp?: boolean;
+  status: DeviceStatus;
+  isOnline: boolean;
+  isKnown: boolean;
+  isNew: boolean;
+  isUnknown: boolean;
+  isPrivateMac: boolean;
+  firstSeen?: string;
+  lastSeen?: string;
+  lastConnected?: string;
+  lastDisconnected?: string;
+  connectedDurationSeconds?: number;
+  source: 'netalertx' | 'demo';
+  rawNetAlertXId?: string;
+}
 export interface Alert { id: string; type: 'unknown_device'; deviceId?: string; title: string; message: string; severity: 'warning'|'critical'; createdAt: string; acknowledgedAt?: string; payload?: Record<string, unknown> }
 export interface DashboardSummary { appName: string; onlineCount: number; unknownCount: number; newTodayCount: number; recentlyDisconnectedCount: number; latestEvent?: NetAlertXEvent; alerts: Alert[]; status: 'connected'|'updating'|'stale'|'netalertx_unreachable'|'backend_error'|'demo'; lastUpdated?: string; lastSuccessfulUpdate?: string; isStale: boolean; demoMode: boolean }

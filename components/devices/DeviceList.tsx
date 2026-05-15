@@ -20,6 +20,11 @@ function deviceSearchHaystack(d: Device): string {
     mac,
     macCompact,
     d.vendor,
+    d.owner,
+    d.group,
+    d.location,
+    d.staticIp === true ? 'static ip' : '',
+    d.staticIp === false ? 'dynamic dhcp' : '',
     d.deviceType,
     d.status,
     d.isOnline ? 'online connected up on-line' : 'offline disconnected down off-line',
@@ -71,9 +76,36 @@ const DEVICE_COLUMNS: DataTableColumn<Device>[] = [
   },
   {
     id: 'vendor',
-    header: 'Manufacturer',
+    header: 'Vendor',
     getValue: (d) => d.vendor ?? '',
     render: (d) => <span className="text-slate-300">{d.vendor ?? 'Unknown vendor'}</span>,
+  },
+  {
+    id: 'group',
+    header: 'Group',
+    getValue: (d) => d.group ?? '',
+    render: (d) => <span className="text-slate-300">{d.group ?? '—'}</span>,
+  },
+  {
+    id: 'location',
+    header: 'Location',
+    getValue: (d) => d.location ?? '',
+    render: (d) => <span className="text-slate-300">{d.location ?? '—'}</span>,
+  },
+  {
+    id: 'staticIp',
+    header: 'Static IP',
+    getValue: (d) => (d.staticIp === true ? 'yes' : d.staticIp === false ? 'no' : ''),
+    getFilterText: (d) =>
+      d.staticIp === true ? 'yes static' : d.staticIp === false ? 'no dhcp dynamic' : '',
+    render: (d) =>
+      d.staticIp === true ? (
+        <span className="text-slate-300">Yes</span>
+      ) : d.staticIp === false ? (
+        <span className="text-slate-500">No</span>
+      ) : (
+        <span className="text-slate-600">—</span>
+      ),
   },
   {
     id: 'status',
@@ -136,7 +168,7 @@ export function DeviceList({ devices }: { devices: Device[] }) {
           onChange={(e) => setQ(e.target.value)}
           type="search"
           placeholder="Search by any field…"
-          title="Matches name, IDs, IP, MAC (with or without separators), vendor, device type, status, timestamps, connection duration, and flags such as new or unknown."
+          title="Matches name, IDs, IP, MAC (with or without separators), vendor, owner, group, location, static IP, device type, status, timestamps, connection duration, and flags such as new or unknown."
           autoComplete="off"
           className="min-h-11 w-full min-w-0 shrink rounded-2xl border border-white/10 bg-slate-950/40 px-4 py-3 outline-none sm:max-w-xl sm:flex-1"
         />

@@ -8,6 +8,34 @@ function pickString(...values: unknown[]) {
   return values.find((v): v is string => typeof v === 'string' && v.trim().length > 0)?.trim();
 }
 
+/** Labels from NetAlertX are usually strings; some exports use numeric codes — coerce so we do not drop values. */
+function pickOptionalLabel(...values: unknown[]): string | undefined {
+  for (const v of values) {
+    if (v === undefined || v === null) continue;
+    if (typeof v === 'string') {
+      const t = v.trim();
+      if (t.length > 0) return t;
+      continue;
+    }
+    if (typeof v === 'number' && Number.isFinite(v)) return String(v);
+  }
+  return undefined;
+}
+
+/** NetAlertX SQLite-style flags: `0` / `1`, occasionally string booleans. */
+function truthyDbFlag(v: unknown): boolean | undefined {
+  if (v === undefined || v === null) return undefined;
+  if (typeof v === 'boolean') return v;
+  if (typeof v === 'number') return v !== 0;
+  if (typeof v === 'string') {
+    const t = v.trim().toLowerCase();
+    if (t === '') return undefined;
+    if (['0', 'false', 'no', 'off'].includes(t)) return false;
+    if (['1', 'true', 'yes', 'on'].includes(t)) return true;
+  }
+  return undefined;
+}
+
 /** NetAlertX `devStatus` values include `On-line`, `Off-line`, `Sleeping`, `Down` (see docs/DATABASE.md). */
 function online(raw: RawNetAlertXDevice) {
   const scan =
@@ -42,6 +70,10 @@ export function normaliseDevice(raw: RawNetAlertXDevice, source: 'netalertx' | '
   );
   const ip = pickString(raw.dev_LastIP, raw.devIP, raw.ip);
   const vendor = pickString(raw.dev_Vendor, raw.devVendor, raw.vendor);
+  const owner = pickOptionalLabel(raw.dev_Owner, raw.devOwner);
+  const group = pickOptionalLabel(raw.dev_Group, raw.devGroup);
+  const location = pickOptionalLabel(raw.dev_Location, raw.devLocation);
+  const staticIp = truthyDbFlag(raw.dev_StaticIP ?? raw.devStaticIP);
   const deviceType = pickString(raw.dev_DeviceType, raw.devType, raw.type);
   const privateMac = isPrivateMac(mac);
   const fqdn = pickString(raw.devFQDN, raw.hostname);
@@ -70,6 +102,10 @@ export function normaliseDevice(raw: RawNetAlertXDevice, source: 'netalertx' | '
     ipAddress: ip,
     macAddress: mac,
     vendor,
+    owner,
+    group,
+    location,
+    staticIp,
     deviceType,
     status: isOnline ? 'online' : 'offline',
     isOnline,

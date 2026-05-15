@@ -69,4 +69,43 @@ describe('normaliseDevice', () => {
     expect(d.isPrivateMac).toBe(true);
     expect(d.displayName).toContain('Private MAC');
   });
+  it('maps NetAlertX group, location, owner, and static IP flags', () => {
+    const d = normaliseDevice({
+      devName: 'Cam',
+      devMAC: '00:11:22:33:44:aa',
+      devOwner: 'Sam',
+      devGroup: 'Security',
+      devLocation: 'Garage',
+      devStaticIP: 1,
+      devPresentLastScan: 1,
+    });
+    expect(d.owner).toBe('Sam');
+    expect(d.group).toBe('Security');
+    expect(d.location).toBe('Garage');
+    expect(d.staticIp).toBe(true);
+  });
+  it('maps snake_case DB-style metadata fields', () => {
+    const d = normaliseDevice({
+      devName: 'X',
+      devMAC: '00:11:22:33:44:bb',
+      dev_Group: 'LAN',
+      dev_Location: 'Closet',
+      dev_StaticIP: '0',
+      devPresentLastScan: 1,
+    });
+    expect(d.group).toBe('LAN');
+    expect(d.location).toBe('Closet');
+    expect(d.staticIp).toBe(false);
+  });
+  it('maps numeric devGroup / devLocation when API uses numeric codes', () => {
+    const d = normaliseDevice({
+      devName: 'Cam',
+      devMAC: '00:11:22:33:44:cc',
+      devGroup: 42,
+      devLocation: 7,
+      devPresentLastScan: 1,
+    });
+    expect(d.group).toBe('42');
+    expect(d.location).toBe('7');
+  });
 });

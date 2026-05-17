@@ -64,7 +64,20 @@ const DEVICE_COLUMNS: DataTableColumn<Device>[] = [
     id: 'ip',
     header: 'IP address',
     getValue: (d) => d.ipAddress ?? '',
-    render: (d) => <span className="tabular-nums text-slate-300">{d.ipAddress ?? 'No IP'}</span>,
+    render: (d) =>
+      d.ipAddress ? (
+        <a
+          href={`http://${d.ipAddress}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(e) => e.stopPropagation()}
+          className="tabular-nums text-blue-400 hover:text-blue-300 hover:underline decoration-blue-600"
+        >
+          {d.ipAddress}
+        </a>
+      ) : (
+        <span className="tabular-nums text-slate-500">No IP</span>
+      ),
   },
   {
     id: 'mac',

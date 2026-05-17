@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { Badge } from '@/components/ui/Badge';
 import { Card } from '@/components/ui/Card';
 import { DeviceRenameForm } from '@/components/devices/DeviceRenameForm';
@@ -12,8 +13,20 @@ export function DeviceDetailPanel({
   device: Device;
   events: NetAlertXEvent[];
 }) {
-  const rows: [string, string | undefined][] = [
-    ['IP address', device.ipAddress],
+  const rows: [string, ReactNode][] = [
+    [
+      'IP address',
+      device.ipAddress ? (
+        <a
+          href={`http://${device.ipAddress}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-400 hover:text-blue-300 hover:underline decoration-blue-400"
+        >
+          {device.ipAddress}
+        </a>
+      ) : undefined,
+    ],
     ['MAC address', device.macAddress],
     ['Vendor', device.vendor],
     ['Owner', device.owner],

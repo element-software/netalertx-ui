@@ -25,6 +25,27 @@ export function getEnv() {
     appBaseUrl: process.env.APP_BASE_URL || '',
     enableSoundAlerts: process.env.ENABLE_SOUND_ALERTS === 'true',
     demoMode: process.env.ENABLE_DEMO_MODE === 'true',
+    haBaseUrl: (process.env.HA_BASE_URL || '').trim().replace(/\/+$/, ''),
+    haApiToken: process.env.HA_API_TOKEN || '',
+    z2mBaseUrl: (process.env.Z2M_BASE_URL || '').trim().replace(/\/+$/, ''),
   };
 }
-export function safeConfig() { const env = getEnv(); let host = 'not configured'; try { host = env.netalertxBaseUrl ? new URL(env.netalertxBaseUrl).host : host; } catch { host = 'invalid URL'; } return { appName: env.appName, netalertxHost: host, pollIntervalSeconds: env.pollIntervalSeconds, sqliteConfigured: Boolean(env.sqliteDbPath), demoMode: env.demoMode, soundAlertsEnabled: env.enableSoundAlerts }; }
+export function safeConfig() {
+  const env = getEnv();
+  let host = 'not configured';
+  try { host = env.netalertxBaseUrl ? new URL(env.netalertxBaseUrl).host : host; } catch { host = 'invalid URL'; }
+  let haHost: string | undefined;
+  try { haHost = env.haBaseUrl ? new URL(env.haBaseUrl).host : undefined; } catch { haHost = 'invalid URL'; }
+  let z2mHost: string | undefined;
+  try { z2mHost = env.z2mBaseUrl ? new URL(env.z2mBaseUrl).host : undefined; } catch { z2mHost = 'invalid URL'; }
+  return {
+    appName: env.appName,
+    netalertxHost: host,
+    pollIntervalSeconds: env.pollIntervalSeconds,
+    sqliteConfigured: Boolean(env.sqliteDbPath),
+    demoMode: env.demoMode,
+    soundAlertsEnabled: env.enableSoundAlerts,
+    ...(haHost !== undefined && { homeAssistantHost: haHost }),
+    ...(z2mHost !== undefined && { zigbee2mqttHost: z2mHost }),
+  };
+}

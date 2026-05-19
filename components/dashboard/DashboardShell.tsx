@@ -12,11 +12,34 @@ import { RecentEventsPanel } from './RecentEventsPanel';
 import type { Device, NetAlertXEvent } from '@/lib/netalertx/types';
 import { SummaryCards } from './SummaryCards';
 
+type ServiceStatus = 'online' | 'offline' | 'unconfigured';
+
+async function fetchServiceStatus(path: string): Promise<ServiceStatus> {
+  try {
+    const res = await fetch(path, { cache: 'no-store' });
+    const data = await res.json();
+    return data.status as ServiceStatus;
+  } catch {
+    return 'offline';
+  }
+}
+
 export function DashboardShell() {
   const [summary, setSummary] = useState<Record<string, unknown>>();
   const [devices, setDevices] = useState<Device[]>([]);
   const [events, setEvents] = useState<NetAlertXEvent[]>([]);
+  const [haStatus, setHaStatus] = useState<ServiceStatus>('unconfigured');
+  const [z2mStatus, setZ2mStatus] = useState<ServiceStatus>('unconfigured');
   const [error, setError] = useState('');
+
+  async function loadServiceStatuses() {
+    const [ha, z2m] = await Promise.all([
+      fetchServiceStatus('/api/ha-status'),
+      fetchServiceStatus('/api/z2m-status'),
+    ]);
+    setHaStatus(ha);
+    setZ2mStatus(z2m);
+  }
 
   async function load() {
     const [s, d, e] = await Promise.all([
@@ -33,7 +56,7 @@ export function DashboardShell() {
     let cancelled = false;
     void (async () => {
       try {
-        await load();
+        await Promise.all([load(), loadServiceStatuses()]);
       } catch {
         if (!cancelled) setError('Unable to load dashboard');
       }
@@ -48,6 +71,7 @@ export function DashboardShell() {
       void fetch('/api/events/recent')
         .then((r) => r.json())
         .then((e) => setEvents(e.events));
+      void loadServiceStatuses();
     });
     es.onerror = () => setError('Live stream disconnected; reconnecting automatically.');
     return () => {
@@ -70,7 +94,7 @@ export function DashboardShell() {
 
   return (
     <div className="flex h-full min-h-0 flex-col gap-4 overflow-hidden p-4 sm:gap-5 sm:p-6 max-xl:overflow-y-auto max-xl:overscroll-y-contain">
-      <DashboardHeader summary={summary} />
+      <DashboardHeader summary={summary} haStatus={haStatus} z2mStatus={z2mStatus} />
       <SummaryCards summary={summary} />
       <div className="grid min-h-0 flex-1 grid-cols-1 gap-4 overflow-hidden sm:gap-5 xl:grid-cols-[1.05fr_0.95fr] max-xl:flex-none max-xl:overflow-visible xl:min-h-0">
         <div className="flex min-h-0 min-w-0 flex-col gap-4 overflow-hidden sm:gap-5 max-xl:min-h-0">

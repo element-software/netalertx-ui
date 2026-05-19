@@ -12,7 +12,7 @@ export function NetworkHealthCard({ summary }: { summary: any }) {
           </p>
         </div>
         <div className="shrink-0 sm:pt-0.5">
-          <StatusBadge status={summary.status} />
+          <StatusBadge label="NetAlertX" status={summary.status} />
         </div>
       </div>
     </Card>

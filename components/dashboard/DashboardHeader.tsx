@@ -1,9 +1,29 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { Badge } from '@/components/ui/Badge';
 import { StatusBadge } from './StatusBadge';
 
-export function DashboardHeader({ summary }: { summary: any }) {
+type ServiceStatus = 'online' | 'offline' | 'connected' | 'disconnected' | 'unconfigured';
+
+function ServiceChip({ label, status }: { label: string; status: ServiceStatus }) {
+  if (status === 'unconfigured') return null;
+  return (
+    <Badge tone={status === 'online' || status === 'connected' ? 'green' : 'red'}>
+      {label} {status}
+    </Badge>
+  );
+}
+
+export function DashboardHeader({
+  summary,
+  haStatus,
+  z2mStatus,
+}: {
+  summary: any;
+  haStatus?: ServiceStatus;
+  z2mStatus?: ServiceStatus;
+}) {
   const [now, setNow] = useState(() => new Date());
 
   useEffect(() => {
@@ -18,10 +38,12 @@ export function DashboardHeader({ summary }: { summary: any }) {
         <h1 className="text-3xl font-black tracking-tight sm:text-4xl lg:text-5xl">{summary.appName}</h1>
       </div>
       <div className="shrink-0 text-left sm:text-right">
-        <div className="mb-2">
-          <StatusBadge status={summary.status} />
+        <div className="mb-2 flex flex-wrap items-center gap-2">
+          <ServiceChip label="NetAlertX" status={summary.status} />
+          <ServiceChip label="HA" status={haStatus ?? 'unconfigured'} />
+          <ServiceChip label="Z2M" status={z2mStatus ?? 'unconfigured'} />
           {summary.demoMode && (
-            <span className="ml-2 rounded-full bg-violet-400/15 px-3 py-1 text-xs text-violet-100">
+            <span className="rounded-full bg-violet-400/15 px-3 py-1 text-xs text-violet-100">
               DEMO MODE
             </span>
           )}

@@ -8,6 +8,9 @@ services:
       - .env
     environment:
       SQLITE_DB_PATH: /app/data/netglance.sqlite
+      HA_BASE_URL: ${HA_BASE_URL:-}
+      HA_API_TOKEN: ${HA_API_TOKEN:-}
+      Z2M_BASE_URL: ${Z2M_BASE_URL:-}
     volumes:
       - netglance-data:/app/data
     restart: unless-stopped

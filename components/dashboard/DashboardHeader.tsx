@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { Badge } from '@/components/ui/Badge';
-import { StatusBadge } from './StatusBadge';
 
 type ServiceStatus = 'online' | 'offline' | 'connected' | 'disconnected' | 'unconfigured';
 
